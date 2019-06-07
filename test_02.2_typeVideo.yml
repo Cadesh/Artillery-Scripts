@@ -1,0 +1,53 @@
+#-------------------------------------------------------------------------------
+# DESCRIPTION
+# Script for load test with Artillery.io
+# Users type 'video' bot search database
+#-------------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------------
+config:
+  target: 'https://bot.page.com/api'
+  http:
+    # Responses have to be sent within 8 seconds or the request will be aborted
+    timeout: 8
+  phases:
+    - duration: 1000     # time in seconds for the full test
+      arrivalRate: 0.1   # number of users to arrive each second (on average)
+      
+scenarios:
+  - name: "user receive token and type 'video'"
+
+    flow:
+    #-----------------------------------------------------------
+    # User hit /init
+    #-----------------------------------------------------------
+    - post:
+        url: "/init"  # directs user for the bot entrance
+        capture:
+          json: "$.token" # capture the token received as response from server
+          as: "token"
+    #- log: "User arrived, token: {{token}}"
+    #-----------------------------------------------------------
+
+    - think: 2 # user rests for x seconds
+
+    #-----------------------------------------------------------
+    # User Types "Video"
+    #-----------------------------------------------------------
+    - post:
+        url: "/submitMessage"
+        headers:
+          Host: bot.page.com
+          User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:67.0) Gecko/20100101 Firefox/67.0
+          Accept: "*/*"
+          Accept-Language: en-US,en;q=0.5
+          Accept-Encoding: gzip, deflate, br
+          Referer: https://www.page.com/?bot
+          Content-Type: application/x-www-form-urlencoded; charset=UTF-8
+          Content-Length: "295"
+          Origin: https://www.page.com
+          Connection: keep-alive
+        body: "messageText=video&pageURL=https%3A%2F%2Fwww.page.com%2F%3Fbot&pageTags=&token={{token}}"   
+    #- log: "finish"
+    #-----------------------------------------------------------------
+    - think: 60 # user rests for x seconds

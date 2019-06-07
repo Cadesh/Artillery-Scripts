@@ -1,0 +1,40 @@
+#-------------------------------------------------------------------------------
+# DESCRIPTION
+# Script for load test with Artillery.io
+# Users type 'help', using the same token id
+#-------------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------------
+config:
+  target: 'https://bot.page.com/api'
+  http:
+    # Responses have to be sent within 8 seconds or the request will be aborted
+    timeout: 8
+  phases:
+    - duration: 100    # time in seconds for the full test
+      arrivalRate: 1   # number of users to arrive each second (on average)
+      
+scenarios:
+  - name: "user types 'help' and 'videos'" # the scenario name
+
+    #-----------------------------------------------------------
+    # User Types "Help"
+    #-----------------------------------------------------------
+    flow:
+    - post:
+        url: "/submitMessage"
+        headers:
+          Host: native.page.com
+          User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:67.0) Gecko/20100101 Firefox/67.0
+          Accept: "*/*"
+          Accept-Language: en-US,en;q=0.5
+          Accept-Encoding: gzip, deflate, br
+          Referer: https://www.page.com/?bot
+          Content-Type: application/x-www-form-urlencoded; charset=UTF-8
+          Content-Length: "294"
+          Origin: https://www.page.com
+          Connection: keep-alive
+        body: "messageText=help&pageURL=https%3A%2F%2Fwww.page.com%2F%3Fbot&pageTags=&token=eyJhbGciOiJ" 
+
+    - think: 10 # user rests for x seconds
+    #-------------------------------------------------------------------------------

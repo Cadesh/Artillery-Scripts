@@ -1,0 +1,49 @@
+#-------------------------------------------------------------------------------
+# DESCRIPTION
+# Script for load test with Artillery.io
+# This scenario simulates users with different bahaviors
+# user type 1: hit the page and does nothing
+# user type 2: hit the page and interact to the bot typing "video"
+#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
+config:
+  target: 'https://bot.page.com/api'  
+  http:
+    timeout: 5  # Maximum acceptable delay for a response in seconds.
+  phases:
+    - duration: 40     # time in seconds for the full test
+      arrivalRate: 1   # One user arrives for every 1 second
+      
+scenarios:
+  - name: "I am just passing by" # scenario name
+    weight: 90  #90% chance to execute this scenario
+    flow:
+    - post:
+        url: "/init"         # directs user for the bot entrance
+    - think: 60
+
+  - name: "I ask for videos"
+    weight: 10  #10% chance to execute this scenario
+    flow:
+
+    - post:
+        url: "/init"        
+        capture:           
+          json: "$.token"
+          as: "token"
+
+    - post:
+        url: "/submitMessage"
+        headers:
+          Host: bot.page.com
+          User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:67.0) Gecko/20100101 Firefox/67.0
+          Accept: "*/*"
+          Accept-Language: en-US,en;q=0.5
+          Accept-Encoding: gzip, deflate, br
+          Referer: https://www.page.com/?bot
+          Content-Type: application/x-www-form-urlencoded; charset=UTF-8
+          Content-Length: "295"
+          Origin: https://www.page.com
+          Connection: keep-alive
+        body: "messageText=video&pageURL=https%3A%2F%2Fwww.page.com%2F%3Fbot&pageTags=&token={{token}}"   
+#-------------------------------------------------------------------------------
