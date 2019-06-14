@@ -1,0 +1,65 @@
+#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
+config:
+  target: 'https://nativebot.bot.com/api'  #Bot server
+  http:
+    timeout: 5  # Maximum acceptable delay for a response in seconds.
+
+  phases:
+    - duration: 2160
+      arrivalRate: 0.5
+      rampTo: 5
+      name: "form zero to hero"
+    # - duration: 600
+    #   arrivalRate: 50
+    #   name: "Sustained max load"
+
+  payload:
+    path: "./tokens.csv"
+    fields:
+      - "token"
+
+scenarios:
+#--------------------------------------------------------
+  - name: "Just hit init" # scenario name
+    weight: 99.99 # probability % to call this scenario
+    flow:
+    - post:
+        url: "/init"
+        headers:
+          Host: nativebot.bot.com
+          User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:67.0) Gecko/20100101 Firefox/67.0
+          Accept: "*/*"
+          Accept-Language: en-US,en;q=0.5
+          Accept-Encoding: gzip, deflate, br
+          Referer: https://www.bot.com/?bot
+          Content-Type: application/x-www-form-urlencoded; charset=UTF-8
+          Content-Length: "277"
+          Origin: https://www.bot.com
+          Connection: keep-alive
+          Cache-Control: max-age=0
+
+        body: "pageURL=https%3A%2F%2Fwww.bot.com%2F%3Fbot&pageTags=&token={{token}}" 
+    #- log: "{{token}}" 
+    - think: 10
+#--------------------------------------------------------
+#--------------------------------------------------------
+  - name: "I ask for videos"
+    weight: 0.01
+    flow:
+    - post:
+        url: "/submitMessage"
+        headers:
+          Host: nativebot.bot.com
+          User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:67.0) Gecko/20100101 Firefox/67.0
+          Accept: "*/*"
+          Accept-Language: en-US,en;q=0.5
+          Accept-Encoding: gzip, deflate, br
+          Referer: https://www.bot.com/?bot
+          Content-Type: application/x-www-form-urlencoded; charset=UTF-8
+          Content-Length: "295"
+          Origin: https://www.bot.com
+          Connection: keep-alive
+        body: "messageText=video&pageURL=https%3A%2F%2Fwww.bot.com%2F%3Fbot&pageTags=&token={{token}}"   
+    - think: 10
+  #-------------------------------------------------------------------------------
