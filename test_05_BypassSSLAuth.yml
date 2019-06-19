@@ -1,0 +1,26 @@
+#-------------------------------------------------------------------------------
+# DESCRIPTION
+# Script for load test with Artillery.io
+# Bypass the SSL Self-Signed Certificate
+#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
+config:
+  target: 'https://68.183.194.81/api' 
+  http:
+    timeout: 10  # Maximum acceptable delay for a response in seconds.
+  phases:
+    - duration: 120
+      arrivalRate: 1
+      rampTo: 5
+      name: "Warm up the application"
+    - duration: 600
+      arrivalRate: 5
+      name: "Sustained max load"
+      
+scenarios:
+  - name: "hit init" # scenario name
+    flow:
+    - post:
+        url: "/init" 
+        rejectUnauthorized: false #ignores the ssl certificate   
+#----------------------------------------------------------------------------
